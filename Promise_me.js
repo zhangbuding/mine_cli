@@ -1,53 +1,46 @@
 class Promise_me {
     constructor(func) {
-        this.__success_res  = null
-        this.__fail_res = null
         this.__status = ''
-        this.__queue = []
-        const __this = this
-        func(function (...args) {
-            __this.__success_res = args
-            __this.__status = 'success'
-            __this.__queue.forEach(obj => {
-                obj.resolve(...args)
-            })
-
-        }, function (...args) {
-            __this.__fail_res = args
-            __this.__status = 'fail'
-            __this.__queue.forEach(obj => {
-                obj.reject(...args)
-            })
+        this.__res = {
+            resolve: null,
+            reject: null
         }
-        )
+        this.__queue = []
+        func((...args) => {
+            this.callback('resolve',args)
+        }, (...args) => {
+            this.callback('reject',args)
+
+        })
     }
     then(resolve, reject) {
-        if(this.__status === 'suceess') {
-            resolve(...this.__success_res)
-        }else if(this.__status === 'fail') {
-            reject(...this.__fail_res)
-        }else {
-            this.__queue.push({resolve, reject})
+        if (this.__status === 'success') {
+            resolve(this.__res.resolve)
+        } else if (this.__status === 'fail') {
+            reject(this.__res.reject)
+        } else {
+            this.__queue.push({ resolve, reject })
         }
-            
+    }
+    callback(param, args) {
+        this.__status = param
+        this.__res[param] = args
+        this.__queue.forEach(fn => fn[param](...args))
     }
     static all(arr) {
-        let allRes = []
         return new Promise_me((resolve, reject) => {
+            let arrRes = []
             let i = 0;
-            next()
-            function next() {
-                arr[i].then( res => {
+            (function next() {
+                arr[i].then( res_resolve => {
+                    arrRes.push(res_resolve)
                     i++
-                    allRes.push(res)
-                    if(i == arr.length) {
-                        resolve(allRes)
-                    }else {
-                        next()
-                    }
-                }, reject)
-                
-            }
+                    i === arr.length ?  resolve(arrRes) : next()
+                }, res_reject => {
+                    reject(res_reject)
+                })  
+            })()
         })
+
     }
 }
