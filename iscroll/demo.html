@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>document</title>
+    <script src="./iscroll_me.js"> </script>
+    <script src="./iscroll_original.js"></script>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <style>
+        .wrap {
+            width: 300px;
+            height: 400px;
+            background: #CCC;
+            overflow: hidden;
+        }
+
+        .content {
+            width: 800px;
+            height: 800px;
+            background: -webkit-linear-gradient(left top, black, white)
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="content"></div>
+    </div>
+</body>
+<script>
+    let iscroll = new Iscroll_me('.wrap', { scrollX: true, freeScroll: false, bounceTime: 600 })
+    // let iscroll = new IScroll('.wrap', {scrollX:true, freeScroll: false, bounceTime: 600})
+
+
+    iscroll.on('beforeScrollStart', function () {
+        console.log('beforeScrollStart')
+    })
+    iscroll.on('scrollStart', function () {
+        console.log('scrollStart')
+    })
+    iscroll.on('scroll', function () {
+        console.log('scroll')
+    })
+    iscroll.on('scrollEnd', function () {
+        console.log('scrollEnd')
+    })
+    iscroll.on('scrollCancel', function () {
+        console.log('scrollCancel')
+    })
+</script>
